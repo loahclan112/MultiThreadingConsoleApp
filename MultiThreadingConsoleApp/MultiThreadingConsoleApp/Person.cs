@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MultiThreadingConsoleApp
 {
@@ -6,6 +7,11 @@ namespace MultiThreadingConsoleApp
     {
         public static int commonId = 0;
         int id;
+
+        public List<Point> remainingPositions = new List<Point>();
+
+        public List<Point> donePositions = new List<Point>();
+
 
         Point previousPosition;
         Point position;
@@ -27,6 +33,7 @@ namespace MultiThreadingConsoleApp
         {
             this.Id = commonId;
             this.Position = new Point(x, y);
+            donePositions.Add(this.Position);
             commonId++;
         }
 
@@ -34,10 +41,20 @@ namespace MultiThreadingConsoleApp
         {
             this.Id = commonId;
             this.Position = point;
+            donePositions.Add(this.Position);
             commonId++;
         }
 
-
+        public Person(bool isInfected, List<Point> points) 
+        {
+            this.Id = commonId;
+            this.IsInfected = isInfected;
+            this.remainingPositions = points;
+            this.Position = points[0];
+            this.remainingPositions.RemoveAt(0);
+            donePositions.Add(this.Position);
+            commonId++;
+        }
 
         public Point Move(int dx, int dy, int boundaryX, int boundaryY)
         {
@@ -49,6 +66,17 @@ namespace MultiThreadingConsoleApp
             return this.position;
         }
 
+        public Point Move()
+        {
+            this.previousPosition = this.position;
+           
+
+            this.position = this.remainingPositions[0];
+            this.remainingPositions.RemoveAt(0);
+            this.donePositions.Add(this.position);
+            return this.position;
+        }
+
         private bool MoveValidation(int posX, int posY, int dx, int dy, int boundaryX, int boundaryY)
         {
             return 0 <= posX + dx && posX + dx < boundaryX &&
@@ -57,6 +85,5 @@ namespace MultiThreadingConsoleApp
         }
 
     }
-
 
 }

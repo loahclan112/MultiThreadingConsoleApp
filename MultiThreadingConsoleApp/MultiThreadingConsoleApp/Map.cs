@@ -37,9 +37,7 @@ namespace MultiThreadingConsoleApp
 
         public void UpdateMap(ConcurrentDictionary<int, Person> personDictionary)
         {
-
             CleanUpMap2(personDictionary);
-           // ResetMap();
             foreach (var item in personDictionary)
             {
                 Point temp = item.Value.Position;
@@ -60,14 +58,13 @@ namespace MultiThreadingConsoleApp
 
         }
 
-        public List<Person> InfectPerson(ConcurrentDictionary<int, Person> personDictionary, Point pos)
+
+        public List<Person> InfectPerson(ConcurrentDictionary<int, Person> globalPersonDictionary, Point pos)
         {
-            List<Person> infectedPersonList = personDictionary.Values.Where(x => Math.Abs(x.Position.X+1 - pos.X) < 2 && Math.Abs(x.Position.Y - pos.Y) < 1).ToList();
+            List<Person> infectedPersonList = globalPersonDictionary.Values.Where(x => Math.Abs(x.Position.X - pos.X) < 3 && Math.Abs(x.Position.Y - pos.Y) < 1).ToList();
             if (infectedPersonList.Count <= 1)
             {
-
                 return infectedPersonList;
-
             }
 
             foreach (Person item in infectedPersonList)
@@ -82,20 +79,67 @@ namespace MultiThreadingConsoleApp
                 }
             }
             return infectedPersonList;
-
         }
 
         private void ResetMap()
         {
-            Console.Clear();
+            int xMax = points.GetLength(0);
+            int yMax = points.GetLength(1);
+            for (int i = 0; i < xMax; i++)
+            {
+                for (int j = 0; j < yMax; j++)
+                {
+                    Console.SetCursorPosition(i, j);
+                    Console.Write(" ");
+                }
+            }
+
         }
 
+        private void CleanUpMapWithEmpty(ConcurrentDictionary<int, Person> personDictionary)
+        {
+            List<Point> personPoints = personDictionary.Values.Select(x => x.Position).ToList();
+
+            List<Point> personPreviousPoints = personDictionary.Values.Select(x => x.PreviousPosition).ToList();
+
+            foreach (Point item in personPreviousPoints)
+            {
+                lock (MyLocks.lockConsoleObject)
+                {
+                    Console.SetCursorPosition(item.X, item.Y);
+                    Console.Write(" ");
+                    Console.SetCursorPosition(item.X + 1, item.Y);
+                    Console.Write(" ");
+                    Console.SetCursorPosition(item.X + 2, item.Y);
+                    Console.Write(" ");
+                }
+            }
+
+            for (int i = 0; i < points.GetLength(1); i++)
+            {
+                lock (MyLocks.lockConsoleObject)
+                {
+                    Console.SetCursorPosition(points.GetLength(0), i);
+                    Console.Write(" ");
+                    Console.SetCursorPosition(points.GetLength(0) + 1, i);
+                    Console.Write(" ");
+                    Console.SetCursorPosition(points.GetLength(0) + 2, i);
+                    Console.Write(" ");
+                }
+
+            }
+        }
 
         private void CleanUpMap2(ConcurrentDictionary<int, Person> personDictionary)
         {
             List<Point> personPoints = personDictionary.Values.Select(x => x.Position).ToList();
 
             List<Point> personPreviousPoints = personDictionary.Values.Select(x => x.PreviousPosition).ToList();
+
+            if (personPreviousPoints[0] == null)
+            {
+                return;
+            }
 
             foreach (Point item in personPreviousPoints)
             {
