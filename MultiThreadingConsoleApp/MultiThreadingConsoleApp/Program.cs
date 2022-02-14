@@ -23,7 +23,7 @@ namespace MultiThreadingConsoleApp
 
         public static int infectedCount = 0;
 
-        public static int threadCount = 5;
+        public static int threadCount = 1 ;
 
         public static Stopwatch sw = new Stopwatch();
 
@@ -44,6 +44,8 @@ namespace MultiThreadingConsoleApp
         public static Task timerThread;
 
         public static Task printerThread;
+
+        public static Task StatusprinterThread;
 
         public static void StartTimer() {
 
@@ -69,11 +71,32 @@ namespace MultiThreadingConsoleApp
             }
         }
 
-        static void Main(string[] args)
+        public static void StartPrinterasd(ConcurrentDictionary<int, Person>  globalPersonDictionary)
+        {
+
+            while (!source.IsCancellationRequested)
+            {
+                int temp = getInfectedPeopleCount(globalPersonDictionary);
+                lock (MyLocks.lockInfectedCountObject)
+                {
+                    infectedCount = temp;
+                }
+                lock (MyLocks.lockConsoleObject)
+                {
+                    Console.SetCursorPosition(0, mapYMax + 1);
+                    Console.WriteLine("Infected People Count: " + infectedCount + "/ " + peopleCount + "  ( " + ((double)infectedCount / peopleCount) * 100 + " % )");
+                }
+            }
+        }
+
+
+
+static void Main2(string[] args)
         {
             Console.CursorVisible = false;
             timerThread = new Task(StartTimer, TaskCreationOptions.LongRunning);
             printerThread = new Task(StartPrinter, TaskCreationOptions.LongRunning);
+            StatusprinterThread = new Task(StartPrinter, TaskCreationOptions.LongRunning);
 
             isDoneWIthMovement = new List<bool>();
 
@@ -91,7 +114,6 @@ namespace MultiThreadingConsoleApp
 
             map = new Map(mapXMax, mapYMax);
 
-            // personDictionary = InitPersonDictionaryRandom(peopleCount);
              personDictionary = InitPersonDictionary(data.personList);
 
 
@@ -102,9 +124,6 @@ namespace MultiThreadingConsoleApp
                 infectedPeopleStart.Add(item.IsInfected);
             }
 
-
-
-            //InfectRandomPeople(personDictionary, infectedCount);
 
             List<ConcurrentDictionary<int, Person>> listDictionary = new List<ConcurrentDictionary<int, Person>>();
 
@@ -136,6 +155,7 @@ namespace MultiThreadingConsoleApp
 
             timerThread.Start();
             printerThread.Start();
+            StatusprinterThread.Start();
 
             Console.ReadLine();
         }
@@ -161,17 +181,9 @@ namespace MultiThreadingConsoleApp
 
             }
 
+            printerThread.Wait(50);
             map.UpdateMap(globalPersonDictionary);
-            int temp = getInfectedPeopleCount(globalPersonDictionary);
-            lock (MyLocks.lockInfectedCountObject)
-            {
-                infectedCount = temp;
-            }
-            lock (MyLocks.lockConsoleObject)
-            {
-                Console.SetCursorPosition(0, mapYMax + 1);
-                Console.WriteLine("Infected People Count: " + infectedCount + "/ " + peopleCount + "  ( " + ((double)infectedCount / peopleCount) * 100 + " % )");
-            }
+
 
             isPrinterDone = true;
 

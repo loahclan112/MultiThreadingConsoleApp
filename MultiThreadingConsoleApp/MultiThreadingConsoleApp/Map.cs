@@ -38,6 +38,7 @@ namespace MultiThreadingConsoleApp
         public void UpdateMap(ConcurrentDictionary<int, Person> personDictionary)
         {
             CleanUpMap2(personDictionary);
+            //ResetMap();
             foreach (var item in personDictionary)
             {
                 Point temp = item.Value.Position;
@@ -48,6 +49,32 @@ namespace MultiThreadingConsoleApp
                 }
 
                 lock (MyLocks.lockConsoleObject) {
+                    ConsoleColor c = item.Value.Color;
+                    Console.ForegroundColor = c;
+                    Console.SetCursorPosition(temp.X, temp.Y);
+                    Console.Write("[" + points[temp.X, temp.Y] + "]");
+                    Console.ResetColor();
+                }
+            }
+
+        }
+
+        public void UpdateMapParallel(ConcurrentDictionary<int, Person> personDictionary)
+        {
+            CleanUpMap2(personDictionary);
+            //ResetMap();
+            foreach (var item in personDictionary)
+            {
+                Point temp = item.Value.Position;
+
+                int count = InfectPerson(personDictionary, temp).Count;
+                lock (MyLocks.lockUpdateMapObject)
+                {
+                    points[temp.X, temp.Y] = count.ToString();
+                }
+
+                lock (MyLocks.lockConsoleObject)
+                {
                     ConsoleColor c = item.Value.Color;
                     Console.ForegroundColor = c;
                     Console.SetCursorPosition(temp.X, temp.Y);
@@ -85,12 +112,16 @@ namespace MultiThreadingConsoleApp
         {
             int xMax = points.GetLength(0);
             int yMax = points.GetLength(1);
-            for (int i = 0; i < xMax; i++)
+            for (int i = 0; i < xMax+3; i++)
             {
                 for (int j = 0; j < yMax; j++)
                 {
-                    Console.SetCursorPosition(i, j);
-                    Console.Write(" ");
+                    lock (MyLocks.lockConsoleObject)
+                    {
+                        Console.SetCursorPosition(i, j);
+                        Console.Write(" ");
+                    }
+
                 }
             }
 
@@ -143,15 +174,19 @@ namespace MultiThreadingConsoleApp
 
             foreach (Point item in personPreviousPoints)
             {
-                lock (MyLocks.lockConsoleObject)
-                {
-                    Console.SetCursorPosition(item.X, item.Y);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(item.X + 1, item.Y);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(item.X + 2, item.Y);
-                    Console.Write(" ");
-                }
+                    lock (MyLocks.lockConsoleObject)
+                    {
+                        Console.SetCursorPosition(item.X, item.Y);
+                        Console.Write(" ");
+                        Console.SetCursorPosition(item.X + 1, item.Y);
+                        Console.Write(" ");
+                        Console.SetCursorPosition(item.X + 2, item.Y);
+                        Console.Write(" ");
+                        Console.SetCursorPosition(item.X + 3, item.Y);
+                        Console.Write(" ");
+                    }
+
+
             }
 
             for (int i = 0; i < points.GetLength(1); i++)
