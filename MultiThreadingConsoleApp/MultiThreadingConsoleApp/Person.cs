@@ -33,6 +33,7 @@ namespace MultiThreadingConsoleApp
         {
             this.Id = commonId;
             this.Position = new Point(x, y);
+            this.previousPosition = this.position;
             donePositions.Add(this.Position);
             commonId++;
         }
@@ -41,16 +42,19 @@ namespace MultiThreadingConsoleApp
         {
             this.Id = commonId;
             this.Position = point;
+            this.previousPosition = this.position;
             donePositions.Add(this.Position);
             commonId++;
         }
 
         public Person(bool isInfected, List<Point> points) 
         {
+          
             this.Id = commonId;
             this.IsInfected = isInfected;
             this.remainingPositions = points;
             this.Position = points[0];
+            this.previousPosition = this.Position;
             this.remainingPositions.RemoveAt(0);
             donePositions.Add(this.Position);
             commonId++;

@@ -46,6 +46,7 @@ namespace MultiThreadingConsoleApp
             return angle;
         }
 
+        //get distance as well
         public Point GetMovementDirectionToOtherPoint(Point point) {
 
             int x = 0;

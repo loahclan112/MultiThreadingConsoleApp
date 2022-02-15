@@ -7,11 +7,12 @@ namespace MultiThreadingConsoleApp
     {
 
         static string file = Directory.GetCurrentDirectory()+"\\Data.txt";
+        static string fileGenerated = Directory.GetCurrentDirectory() + "\\DataGenerated.txt";
 
 
         public static List<string> ReadFromFile()
         {
-            return new List<string>(File.ReadAllLines(file));
+            return new List<string>(File.ReadAllLines(fileGenerated));
         }
 
         public static List<string> ReadFromFile(string inputfile)
@@ -19,13 +20,14 @@ namespace MultiThreadingConsoleApp
 
             return new List<string>(File.ReadAllLines(inputfile));
         }
-        public static void WriteToFile(string outputContent) {
 
-            File.WriteAllText(file, outputContent);
-        }
-
-        public static void WriteToFile(List<string> outputContent)
+        public static void WriteToFile(List<string> outputContent, bool isGenerating)
         {
+            string file = FileHandler.file;
+            if (isGenerating)
+            {
+                file = FileHandler.fileGenerated;
+            }
             File.WriteAllLines(file, outputContent);
         }
     }

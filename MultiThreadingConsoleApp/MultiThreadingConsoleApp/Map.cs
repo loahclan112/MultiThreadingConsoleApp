@@ -35,15 +35,16 @@ namespace MultiThreadingConsoleApp
             return map;
         }
 
-        public void UpdateMap(ConcurrentDictionary<int, Person> personDictionary)
+        public void UpdateMap(ConcurrentDictionary<int, Person> personDictionary, List<int> counts)
         {
-            CleanUpMap2(personDictionary);
+            //CleanUpMap2(personDictionary);
             //ResetMap();
             foreach (var item in personDictionary)
             {
                 Point temp = item.Value.Position;
 
-                int count = InfectPerson(personDictionary, temp).Count;
+                //   int count =InfectPerson(personDictionary, temp).Count;
+                int count = counts[item.Key];
                 lock (MyLocks.lockUpdateMapObject) {
                     points[temp.X, temp.Y] = count.ToString();
                 }
@@ -51,32 +52,8 @@ namespace MultiThreadingConsoleApp
                 lock (MyLocks.lockConsoleObject) {
                     ConsoleColor c = item.Value.Color;
                     Console.ForegroundColor = c;
-                    Console.SetCursorPosition(temp.X, temp.Y);
-                    Console.Write("[" + points[temp.X, temp.Y] + "]");
-                    Console.ResetColor();
-                }
-            }
-
-        }
-
-        public void UpdateMapParallel(ConcurrentDictionary<int, Person> personDictionary)
-        {
-            CleanUpMap2(personDictionary);
-            //ResetMap();
-            foreach (var item in personDictionary)
-            {
-                Point temp = item.Value.Position;
-
-                int count = InfectPerson(personDictionary, temp).Count;
-                lock (MyLocks.lockUpdateMapObject)
-                {
-                    points[temp.X, temp.Y] = count.ToString();
-                }
-
-                lock (MyLocks.lockConsoleObject)
-                {
-                    ConsoleColor c = item.Value.Color;
-                    Console.ForegroundColor = c;
+                    Console.SetCursorPosition(item.Value.PreviousPosition.X, item.Value.PreviousPosition.Y);
+                    Console.Write("    ");
                     Console.SetCursorPosition(temp.X, temp.Y);
                     Console.Write("[" + points[temp.X, temp.Y] + "]");
                     Console.ResetColor();
@@ -86,27 +63,8 @@ namespace MultiThreadingConsoleApp
         }
 
 
-        public List<Person> InfectPerson(ConcurrentDictionary<int, Person> globalPersonDictionary, Point pos)
-        {
-            List<Person> infectedPersonList = globalPersonDictionary.Values.Where(x => Math.Abs(x.Position.X - pos.X) < 3 && Math.Abs(x.Position.Y - pos.Y) < 1).ToList();
-            if (infectedPersonList.Count <= 1)
-            {
-                return infectedPersonList;
-            }
 
-            foreach (Person item in infectedPersonList)
-            {
-                if (item.IsInfected)
-                {
-                    foreach (Person victim in infectedPersonList)
-                    {
-                        victim.IsInfected = true;
-                    }
-                    break;
-                }
-            }
-            return infectedPersonList;
-        }
+
 
         private void ResetMap()
         {
@@ -172,22 +130,48 @@ namespace MultiThreadingConsoleApp
                 return;
             }
 
-            foreach (Point item in personPreviousPoints)
+            for (int i = 0; i < personPreviousPoints.Count; i++)
             {
+
+                if (personPreviousPoints[i] == personPoints[i])
+                {
+                    continue;
+                }
+                else {
+
                     lock (MyLocks.lockConsoleObject)
                     {
-                        Console.SetCursorPosition(item.X, item.Y);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(item.X + 1, item.Y);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(item.X + 2, item.Y);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(item.X + 3, item.Y);
-                        Console.Write(" ");
+                        /*
+                        if (item.Y >=1)
+                        {
+                            Console.SetCursorPosition(item.X, item.Y - 1);
+                            Console.Write("    ");
+
+                        }
+                        if (item.X >= 1)
+                        {
+                            Console.SetCursorPosition(item.X-1, item.Y);
+                            Console.Write("    ");
+
+                        }
+                        */
+
+
+                        Console.SetCursorPosition(personPreviousPoints[i].X, personPreviousPoints[i].Y);
+                        Console.Write("    ");
+                        /*
+                        Console.SetCursorPosition(item.X + 1, item.Y +1);
+                        Console.Write("    ");
+                        */
                     }
 
+                }
 
             }
+
+
+
+          
 
             for (int i = 0; i < points.GetLength(1); i++)
             {
