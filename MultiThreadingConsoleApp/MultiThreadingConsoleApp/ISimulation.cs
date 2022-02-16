@@ -9,8 +9,11 @@ using System.Threading.Tasks;
 
 namespace MultiThreadingConsoleApp
 {
-   public interface ISimluation
+   public interface ISimulation
     {
+
+        bool IsDone();
+
         void StartSimulation();
 
         void StartTimer();

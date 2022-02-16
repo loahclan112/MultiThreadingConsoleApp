@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 namespace MultiThreadingConsoleApp
 {
 
-    class SimulationRandom : ISimluation
+    class SimulationRandom : ISimulation
     {
         public static Random random = new Random();
-        public static CancellationTokenSource source = new CancellationTokenSource();
+        public CancellationTokenSource source = new CancellationTokenSource();
 
         public  int mapXMax = 150;
         public  int mapYMax = 75;
@@ -22,35 +22,36 @@ namespace MultiThreadingConsoleApp
 
         public  int peopleCount = 20;
 
-        public static int infectedCount = 4;
+        public  int infectedCount = 4;
 
         public int threadCount = 1;
 
-        public static Stopwatch sw = new Stopwatch();
+        public  Stopwatch sw = new Stopwatch();
 
-        public static List<Task> threads = new List<Task>();
+        public  List<Task> threads = new List<Task>();
 
-        public static ConcurrentDictionary<int, Person> globalPersonDictionary;
+        public  ConcurrentDictionary<int, Person> globalPersonDictionary;
 
-        public static List<bool> isDoneWIthMovement;
+        public  List<bool> isDoneWIthMovement;
 
-        public static bool isPrinterDone;
+        public  bool isPrinterDone;
 
         public bool isZombieModeOn;
 
-        public static Data data;
+        public  Data data;
 
-        public static List<bool> infectedPeopleStart;
-        public static Map map;
+        public  List<bool> infectedPeopleStart;
+        public  Map map;
 
-        public static Task timerThread;
+        public  Task timerThread;
 
-        public static Task printerThread;
-        public static Task statusprinterThread;
+        public  Task printerThread;
+
+        public bool isDone;
 
 
 
-        public SimulationRandom(int threadCount = 1, int mapXMax = 150, int mapYMax = 75, int peopleCount = 20, bool isMapVisible = true, bool isZombieModeOn = true )
+        public SimulationRandom(int threadCount = 1, int mapXMax = 150, int mapYMax = 75, int peopleCount = 20, bool isMapVisible = true, bool isZombieModeOn = true, int infectedCount = 1 )
         {
             this.threadCount = threadCount;
             this.isMapVisible = isMapVisible;
@@ -58,6 +59,7 @@ namespace MultiThreadingConsoleApp
             this.mapYMax = mapYMax;
             this.peopleCount = peopleCount;
             this.isZombieModeOn = isZombieModeOn;
+            this.infectedCount = infectedCount;
         }
 
         public void StartTimer() {
@@ -74,6 +76,7 @@ namespace MultiThreadingConsoleApp
                     Console.WriteLine("Elapsed Seconds: " + (double)sw.ElapsedMilliseconds / 1000 + " s");
                 }
             }
+            source.Cancel();
         }
 
         public void StartPrinter()
@@ -82,6 +85,7 @@ namespace MultiThreadingConsoleApp
             {
                 PrintMap(globalPersonDictionary,isMapVisible);
             }
+            source.Cancel();
         }
 
 
@@ -89,8 +93,8 @@ namespace MultiThreadingConsoleApp
         {
 
             Console.CursorVisible = false;
-            timerThread = new Task(StartTimer, TaskCreationOptions.LongRunning);
-            printerThread = new Task(StartPrinter, TaskCreationOptions.LongRunning);
+            timerThread = new Task(StartTimer, source.Token, TaskCreationOptions.LongRunning);
+            printerThread = new Task(StartPrinter, source.Token, TaskCreationOptions.LongRunning);
 
             isDoneWIthMovement = new List<bool>();
 
@@ -136,9 +140,10 @@ namespace MultiThreadingConsoleApp
                 listDictionary[threadCount - 1].TryAdd(peopleCount - k, globalPersonDictionary[peopleCount - k]);
 
             }
-
+            int index = 1;
             foreach (var item in listDictionary)
             {
+                int j = index;
                 isDoneWIthMovement.Add(false);
                 if (isZombieModeOn)
                 {
@@ -149,6 +154,7 @@ namespace MultiThreadingConsoleApp
                     threads.Add(new Task(() => ThreadMethod(item), TaskCreationOptions.LongRunning));
 
                 }
+                index++;
 
             }
 
@@ -226,7 +232,10 @@ namespace MultiThreadingConsoleApp
                     data.personList[i].IsInfected = infectedPeopleStart[i];
                 }
                 FileHandler.WriteToFile(data.SaveContent(),true);
+
+                isDone = true;
             }
+
         }
 
         public List<Person> InfectPerson(ConcurrentDictionary<int, Person> globalPersonDictionary, Point pos)
@@ -252,12 +261,13 @@ namespace MultiThreadingConsoleApp
         }
 
         public void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary) {
+            int index = threads.FindIndex(x => x.Id == Task.CurrentId);
             while (infectedCount != peopleCount)
             {
-                isDoneWIthMovement[Task.CurrentId.Value - 1] = false;
+                isDoneWIthMovement[index] = false;
 
                 MovePeople(personDictionary);
-                isDoneWIthMovement[Task.CurrentId.Value - 1] = true;
+                isDoneWIthMovement[index] = true;
 
                 while (!isPrinterDone)
                 {
@@ -270,12 +280,13 @@ namespace MultiThreadingConsoleApp
 
         public void ThreadMethodZombie(ConcurrentDictionary<int, Person> personDictionary, ConcurrentDictionary<int, Person> globalPersonDictionary)
         {
+            int index = threads.FindIndex(x => x.Id == Task.CurrentId);
             while (infectedCount != peopleCount)
             {
-                isDoneWIthMovement[Task.CurrentId.Value - 1] = false;
+                isDoneWIthMovement[index] = false;
 
                 MovePeopleZombie(personDictionary, globalPersonDictionary);
-                isDoneWIthMovement[Task.CurrentId.Value - 1] = true;
+                isDoneWIthMovement[index] = true;
 
                 while (!isPrinterDone)
                 {
@@ -283,6 +294,9 @@ namespace MultiThreadingConsoleApp
                 }
             }
             source.Cancel();
+
+            Task.WaitAll(threads.ToArray());
+            threads[index].Dispose();
         }
 
         public int getInfectedPeopleCount(ConcurrentDictionary<int, Person> personDictionary)
@@ -387,19 +401,6 @@ namespace MultiThreadingConsoleApp
 
         }
 
-
-        /*
-        public static void MovePeopleRandom(ConcurrentDictionary<int, Person> personDictionary)
-        {
-            foreach (var item in personDictionary)
-            {
-                RandomMove(item.Value, mapXMax, mapYMax);
-                item.Value.donePositions.Add(item.Value.Position);
-            }
-
-        }
-        */
-
         public void RandomMove(Person p, int boundaryX, int boundaryY)
         {
             int dx = random.Next(-p.Speed, p.Speed + 1);
@@ -449,6 +450,12 @@ namespace MultiThreadingConsoleApp
             return new Person(point);
         }
 
+        public bool IsDone()
+        {
+            
+            Person.commonId = 0;
+            return isDone;
+        }
     }
 
 

@@ -16,12 +16,26 @@ namespace MultiThreadingConsoleApp
 
             UIConsole uIConsole = new UIConsole();
 
-           ISimluation sim = new Simulation(6,true);
-           ISimluation simrand = new SimulationRandom(2,20,10,20,true,false);
+            do
+            {
+                Console.Clear();
+                ISimulation simulation = uIConsole.SimulationSelector();
 
-            sim.StartSimulation();
+                Console.Clear();
 
-            Console.ReadLine();
+                /*
+               ISimluation sim = new Simulation(6,true);
+               ISimluation simrand = new SimulationRandom(2,20,10,20,true,false);
+                */
+                simulation.StartSimulation();
+
+                while (!simulation.IsDone())
+                {
+
+                }
+
+            } while (uIConsole.StartAgain()) ;
+
         }
     }
 }

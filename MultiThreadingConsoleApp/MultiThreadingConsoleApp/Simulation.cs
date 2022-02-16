@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MultiThreadingConsoleApp
 {
-     public class Simulation : ISimluation
+     public class Simulation : ISimulation
     {
         public CancellationTokenSource source = new CancellationTokenSource();
 
@@ -41,8 +41,8 @@ namespace MultiThreadingConsoleApp
 
         public bool isMapVisible;
 
-        public static List<bool> isDoneWIthMovement;
-
+        public  List<bool> isDoneWIthMovement;
+        private bool isDone;
 
         public Simulation(int threadCount = 1, bool isMapVisible=true) 
         {
@@ -64,6 +64,7 @@ namespace MultiThreadingConsoleApp
                     Console.WriteLine("Elapsed Seconds: " + (double)sw.ElapsedMilliseconds / 1000 +" s");
                 }
             }
+            source.Cancel();
         }
 
         public void StartPrinter()
@@ -72,6 +73,7 @@ namespace MultiThreadingConsoleApp
             {
                 PrintMap(globalPersonDictionary,isMapVisible);
             }
+            source.Cancel();
         }
 
         public void StartSimulation() {
@@ -206,6 +208,8 @@ namespace MultiThreadingConsoleApp
                     data.personList[i].IsInfected = infectedPeopleStart[i];
                 }
                 FileHandler.WriteToFile(data.SaveContent(),false);
+
+                isDone = true;
             }
         }
 
@@ -241,11 +245,12 @@ namespace MultiThreadingConsoleApp
         }
 
         public void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary) {
+            int index = threads.FindIndex(x => x.Id == Task.CurrentId);
             while (infectedCount < peopleCount)
             {
-                isDoneWIthMovement[Task.CurrentId.Value - 1] = false;
+                isDoneWIthMovement[index] = false;
                 MovePeople(personDictionary);
-                isDoneWIthMovement[Task.CurrentId.Value - 1] = true;
+                isDoneWIthMovement[index] = true;
 
                 while (!isPrinterDone)
                 {
@@ -253,7 +258,9 @@ namespace MultiThreadingConsoleApp
                 }
 
             }
-            source.Cancel();     
+            source.Cancel();
+            Task.WaitAll(threads.ToArray());
+            threads[index].Dispose();
         }
 
 
@@ -286,6 +293,12 @@ namespace MultiThreadingConsoleApp
             }
         
             return personDictionary;
+        }
+
+        public bool IsDone()
+        {
+            Person.commonId = 0;
+            return isDone;
         }
 
     }
