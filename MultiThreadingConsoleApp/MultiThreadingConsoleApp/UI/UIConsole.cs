@@ -7,21 +7,6 @@ using System.Threading.Tasks;
 namespace MultiThreadingConsoleApp
 {
 
-    public class InvalidInputException : InvalidCastException
-    {
-        public string msg;
-
-        public InvalidInputException()
-        {
-          
-        }
-
-        public InvalidInputException(string msg) 
-        {
-            this.msg = msg;
-        }
-    }
-
     class UIConsole
     {
         public string GetUserInput() {

@@ -168,14 +168,10 @@ namespace MultiThreadingConsoleApp
             Console.ReadLine();
         }
 
-
-
         public void PrintMap(ConcurrentDictionary<int, Person> globalPersonDictionary, bool isMapVisible) {
 
             isPrinterDone = false;
-
             int CursorPos = isMapVisible ? mapYMax : 0;
-
 
             while (globalPersonDictionary.Where(x => x.Value.PreviousPosition == null).ToList().Count>0) {
             
@@ -235,7 +231,6 @@ namespace MultiThreadingConsoleApp
 
                 isDone = true;
             }
-
         }
 
         public List<Person> InfectPerson(ConcurrentDictionary<int, Person> globalPersonDictionary, Point pos)
@@ -273,7 +268,6 @@ namespace MultiThreadingConsoleApp
                 {
 
                 }
-
             }
             source.Cancel();
         }

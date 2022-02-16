@@ -20,13 +20,8 @@ namespace MultiThreadingConsoleApp
             {
                 Console.Clear();
                 ISimulation simulation = uIConsole.SimulationSelector();
-
                 Console.Clear();
 
-                /*
-               ISimluation sim = new Simulation(6,true);
-               ISimluation simrand = new SimulationRandom(2,20,10,20,true,false);
-                */
                 simulation.StartSimulation();
 
                 while (!simulation.IsDone())

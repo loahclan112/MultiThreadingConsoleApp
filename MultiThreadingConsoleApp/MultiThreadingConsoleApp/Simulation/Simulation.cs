@@ -50,7 +50,6 @@ namespace MultiThreadingConsoleApp
             this.isMapVisible = isMapVisible;
         
         }
-
         public void StartTimer() 
         {
             sw.Start();

@@ -43,21 +43,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data.cs" />
-    <Compile Include="ISimulation.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="UI\InvalidInputException.cs" />
+    <Compile Include="IO\Data.cs" />
+    <Compile Include="Simulation\ISimulation.cs" />
+    <Compile Include="Model\Map.cs" />
     <Compile Include="MyLocks.cs" />
-    <Compile Include="Person.cs" />
-    <Compile Include="FileHandler.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="Simulation.cs" />
+    <Compile Include="Model\Person.cs" />
+    <Compile Include="IO\FileHandler.cs" />
+    <Compile Include="Model\Point.cs" />
+    <Compile Include="Simulation\Simulation.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="SimulationRandom.cs" />
+    <Compile Include="Simulation\SimulationRandom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UIConsole.cs" />
+    <Compile Include="UI\UIConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
