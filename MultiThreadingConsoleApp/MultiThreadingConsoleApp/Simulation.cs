@@ -129,7 +129,7 @@ namespace MultiThreadingConsoleApp
             foreach (var item in listDictionary)
             {
                 isDoneWIthMovement.Add(false);
-                threads.Add(new Task(() => ThreadMethod(item, globalPersonDictionary), TaskCreationOptions.LongRunning));
+                threads.Add(new Task(() => ThreadMethod(item), TaskCreationOptions.LongRunning));
             }
 
             foreach (var item in threads)
@@ -240,7 +240,7 @@ namespace MultiThreadingConsoleApp
             */
         }
 
-        public void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary, ConcurrentDictionary<int, Person> globalPersonDictionary) {
+        public void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary) {
             while (infectedCount < peopleCount)
             {
                 isDoneWIthMovement[Task.CurrentId.Value - 1] = false;

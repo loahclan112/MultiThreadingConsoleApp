@@ -22,7 +22,7 @@ namespace MultiThreadingConsoleApp
        
         void Thinking();
 
-        void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary, ConcurrentDictionary<int, Person> globalPersonDictionary);
+        void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary);
 
 
         int getInfectedPeopleCount(ConcurrentDictionary<int, Person> personDictionary);

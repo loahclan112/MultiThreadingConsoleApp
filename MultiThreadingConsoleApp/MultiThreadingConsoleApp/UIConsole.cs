@@ -8,7 +8,14 @@ namespace MultiThreadingConsoleApp
 {
     class UIConsole
     {
+        public ISimluation SimulationSelector() {
 
+
+
+            return new SimulationRandom();
+
+            return new Simulation();
+        }
 
     }
 }
