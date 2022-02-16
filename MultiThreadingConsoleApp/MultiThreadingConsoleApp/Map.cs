@@ -7,7 +7,6 @@ namespace MultiThreadingConsoleApp
 {
     public class Map
     {
-
         string[,] points;
 
         public Map(string[,] points)
@@ -17,7 +16,6 @@ namespace MultiThreadingConsoleApp
 
         public Map(int x, int y)
         {
-
             this.points = InitMap(x, y);
         }
 
@@ -37,13 +35,9 @@ namespace MultiThreadingConsoleApp
 
         public void UpdateMap(ConcurrentDictionary<int, Person> personDictionary, List<int> counts)
         {
-            //CleanUpMap2(personDictionary);
-            //ResetMap();
             foreach (var item in personDictionary)
             {
                 Point temp = item.Value.Position;
-
-                //   int count =InfectPerson(personDictionary, temp).Count;
                 int count = counts[item.Key];
                 lock (MyLocks.lockUpdateMapObject) {
                     points[temp.X, temp.Y] = count.ToString();
@@ -59,203 +53,6 @@ namespace MultiThreadingConsoleApp
                     Console.ResetColor();
                 }
             }
-
         }
-
-
-
-
-
-        private void ResetMap()
-        {
-            int xMax = points.GetLength(0);
-            int yMax = points.GetLength(1);
-            for (int i = 0; i < xMax+3; i++)
-            {
-                for (int j = 0; j < yMax; j++)
-                {
-                    lock (MyLocks.lockConsoleObject)
-                    {
-                        Console.SetCursorPosition(i, j);
-                        Console.Write(" ");
-                    }
-
-                }
-            }
-
-        }
-
-        private void CleanUpMapWithEmpty(ConcurrentDictionary<int, Person> personDictionary)
-        {
-            List<Point> personPoints = personDictionary.Values.Select(x => x.Position).ToList();
-
-            List<Point> personPreviousPoints = personDictionary.Values.Select(x => x.PreviousPosition).ToList();
-
-            foreach (Point item in personPreviousPoints)
-            {
-                lock (MyLocks.lockConsoleObject)
-                {
-                    Console.SetCursorPosition(item.X, item.Y);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(item.X + 1, item.Y);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(item.X + 2, item.Y);
-                    Console.Write(" ");
-                }
-            }
-
-            for (int i = 0; i < points.GetLength(1); i++)
-            {
-                lock (MyLocks.lockConsoleObject)
-                {
-                    Console.SetCursorPosition(points.GetLength(0), i);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(points.GetLength(0) + 1, i);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(points.GetLength(0) + 2, i);
-                    Console.Write(" ");
-                }
-
-            }
-        }
-
-        private void CleanUpMap2(ConcurrentDictionary<int, Person> personDictionary)
-        {
-            List<Point> personPoints = personDictionary.Values.Select(x => x.Position).ToList();
-
-            List<Point> personPreviousPoints = personDictionary.Values.Select(x => x.PreviousPosition).ToList();
-
-            if (personPreviousPoints[0] == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < personPreviousPoints.Count; i++)
-            {
-
-                if (personPreviousPoints[i] == personPoints[i])
-                {
-                    continue;
-                }
-                else {
-
-                    lock (MyLocks.lockConsoleObject)
-                    {
-                        /*
-                        if (item.Y >=1)
-                        {
-                            Console.SetCursorPosition(item.X, item.Y - 1);
-                            Console.Write("    ");
-
-                        }
-                        if (item.X >= 1)
-                        {
-                            Console.SetCursorPosition(item.X-1, item.Y);
-                            Console.Write("    ");
-
-                        }
-                        */
-
-
-                        Console.SetCursorPosition(personPreviousPoints[i].X, personPreviousPoints[i].Y);
-                        Console.Write("    ");
-                        /*
-                        Console.SetCursorPosition(item.X + 1, item.Y +1);
-                        Console.Write("    ");
-                        */
-                    }
-
-                }
-
-            }
-
-
-
-          
-
-            for (int i = 0; i < points.GetLength(1); i++)
-            {
-                lock (MyLocks.lockConsoleObject)
-                {
-                    Console.SetCursorPosition(points.GetLength(0), i);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(points.GetLength(0) + 1, i);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(points.GetLength(0) + 2, i);
-                    Console.Write(" ");
-                }
-
-            }
-        }
-
-        //REFACTOR THIS
-        private void CleanUpMap(ConcurrentDictionary<int, Person> personDictionary)
-        {
-
-            List<Point> personPoints = personDictionary.Values.Select(x => x.Position).ToList();
-
-
-            for (int i = 0; i < points.GetLength(0); i++)
-            {
-                for (int j = 0; j < points.GetLength(1); j++)
-                {
-                    if (!(personPoints.Contains(new Point(i, j)) || personPoints.Contains(new Point(i - 1, j)) || personPoints.Contains(new Point(i - 2, j))))
-                    {
-                        lock (MyLocks.lockConsoleObject)
-                        {
-                            points[i, j] = " ";
-                            Console.SetCursorPosition(i, j);
-                            Console.Write(points[i, j]);
-                            if (i - 1 >= 0)
-                            {
-                                Console.SetCursorPosition(i - 1, j);
-                                points[i - 1, j] = " ";
-                                Console.Write(points[i - 1, j]);
-                            }
-                            if (i - 2 >= 0)
-                            {
-                                Console.SetCursorPosition(i - 2, j);
-                                points[i - 2, j] = " ";
-                                Console.Write(points[i - 2, j]);
-                            }
-                        }
-                     
-                    }
-                }
-            }
-
-            for (int i = 0; i < points.GetLength(1); i++)
-            {
-                lock (MyLocks.lockConsoleObject)
-                {
-                    Console.SetCursorPosition(points.GetLength(0), i);
-                    Console.Write(" ");
-                    Console.SetCursorPosition(points.GetLength(0) + 1, i);
-                    Console.Write(" ");
-                }
-
-            }
-        }
-
-        public void PrintMap()
-        {
-            if (this.points == null || this.points.Length == 0)
-            {
-                return;
-            }
-
-            for (int i = 0; i < points.GetLength(0); i++)
-            {
-                Console.WriteLine();
-                for (int j = 0; j < points.GetLength(1); j++)
-                {
-                    Console.Write(points[i, j]);
-                }
-            }
-
-        }
-
     }
-
-
 }

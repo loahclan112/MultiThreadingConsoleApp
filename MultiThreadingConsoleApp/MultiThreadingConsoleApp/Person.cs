@@ -7,11 +7,8 @@ namespace MultiThreadingConsoleApp
     {
         public static int commonId = 0;
         int id;
-
         public List<Point> remainingPositions = new List<Point>();
-
-        public List<Point> donePositions = new List<Point>();
-
+        private List<Point> donePositions = new List<Point>();
 
         Point previousPosition;
         Point position;
@@ -26,15 +23,15 @@ namespace MultiThreadingConsoleApp
         public int Speed { get => speed; set => speed = value; }
         public ConsoleColor Color { get => color; set => color = value; }
         public bool IsInfected { get => isInfected; set { isInfected = value; if (isInfected) Color = ConsoleColor.Red; } }
-
         public Point PreviousPosition { get => previousPosition; set => previousPosition = value; }
+        public List<Point> DonePositions { get => donePositions; set => donePositions = value; }
 
         public Person(int x, int y)
         {
             this.Id = commonId;
             this.Position = new Point(x, y);
             this.previousPosition = this.position;
-            donePositions.Add(this.Position);
+            DonePositions.Add(this.Position);
             commonId++;
         }
 
@@ -43,7 +40,7 @@ namespace MultiThreadingConsoleApp
             this.Id = commonId;
             this.Position = point;
             this.previousPosition = this.position;
-            donePositions.Add(this.Position);
+            DonePositions.Add(this.Position);
             commonId++;
         }
 
@@ -56,7 +53,7 @@ namespace MultiThreadingConsoleApp
             this.Position = points[0];
             this.previousPosition = this.Position;
             this.remainingPositions.RemoveAt(0);
-            donePositions.Add(this.Position);
+            DonePositions.Add(this.Position);
             commonId++;
         }
 
@@ -77,7 +74,7 @@ namespace MultiThreadingConsoleApp
 
             this.position = this.remainingPositions[0];
             this.remainingPositions.RemoveAt(0);
-            this.donePositions.Add(this.position);
+            this.DonePositions.Add(this.position);
             return this.position;
         }
 

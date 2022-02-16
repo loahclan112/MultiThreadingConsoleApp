@@ -7,8 +7,6 @@ namespace MultiThreadingConsoleApp
         int x;
         int y;
 
-
-
         public Point(string pointString) 
         {
             string[] splitstring = pointString.Split(',');
@@ -38,15 +36,6 @@ namespace MultiThreadingConsoleApp
             return distance;
         }
 
-        public double AngleBetweenOtherPoint(Point point) 
-        {
-            var radian = Math.Atan2((point.Y - this.Y), (point.X - this.X));
-            var angle = (radian * (180 / Math.PI) + 360) % 360;
-
-            return angle;
-        }
-
-        //get distance as well
         public Point GetMovementDirectionToOtherPoint(Point point) {
 
             int x = 0;

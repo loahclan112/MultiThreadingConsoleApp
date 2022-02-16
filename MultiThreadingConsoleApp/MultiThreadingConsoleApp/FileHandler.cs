@@ -5,10 +5,8 @@ namespace MultiThreadingConsoleApp
 {
     public static class FileHandler
     {
-
-        static string file = Directory.GetCurrentDirectory()+"\\Data.txt";
+        static string file = Directory.GetCurrentDirectory() + "\\Data.txt";
         static string fileGenerated = Directory.GetCurrentDirectory() + "\\DataGenerated.txt";
-
 
         public static List<string> ReadFromFile()
         {
@@ -17,7 +15,6 @@ namespace MultiThreadingConsoleApp
 
         public static List<string> ReadFromFile(string inputfile)
         {
-
             return new List<string>(File.ReadAllLines(inputfile));
         }
 

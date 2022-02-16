@@ -16,13 +16,13 @@ namespace MultiThreadingConsoleApp
         {
 
         }
+
         public Data(int mapX, int mapY, List<Person> personList)
         {
             this.mapX = mapX;
             this.mapY = mapY;
             this.personList = personList;
         }
-
 
         public Data LoadData(List<string> lines) {
             Data data = new Data(Convert.ToInt32(lines[0]), Convert.ToInt32(lines[1]), new List<Person>());
@@ -50,7 +50,6 @@ namespace MultiThreadingConsoleApp
 
         public List<string> SaveContent()
         {
-
             List<string> lines = new List<string>();
             lines.Add(mapX.ToString());
             lines.Add(mapY.ToString());
@@ -59,15 +58,12 @@ namespace MultiThreadingConsoleApp
             foreach (var item in this.personList)
             {
                 personData += item.IsInfected + "|";
-                personData += String.Join(" ", item.donePositions.Select(z => z.ToString()));
+                personData += String.Join(" ", item.DonePositions.Select(z => z.ToString()));
                 lines.Add(personData);
                 personData = String.Empty;
             }
 
             return lines;
         }
-
     }
-
-
 }

@@ -44,14 +44,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data.cs" />
+    <Compile Include="ISimulation.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MyLocks.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="FileHandler.cs" />
     <Compile Include="Point.cs" />
+    <Compile Include="Simulation.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProgramRandom.cs" />
+    <Compile Include="SimulationRandom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
