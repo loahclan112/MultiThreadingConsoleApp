@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 namespace MultiThreadingConsoleApp
 {
 
+
+
     class UIConsole
     {
         public string GetUserInput() {
             return Console.ReadLine();
         }
 
-        private int InfectedCountSelect()
+        private int InfectedCountSelect(int populationCount)
         {
             Console.Write("Select Infected Person Count (Suggested 1 - peopleCount):  ");
             string result = GetUserInput();
@@ -23,7 +25,7 @@ namespace MultiThreadingConsoleApp
             try
             {
                 temp = ConvertToInt(result);
-                if (temp < 1 || temp > 1000)
+                if (temp < 1 || temp > populationCount)
                 {
                     throw new InvalidInputException("Invalid Infected Person Count set to 1");
                 }
@@ -77,7 +79,7 @@ namespace MultiThreadingConsoleApp
             try
             {
                 temp = ConvertToInt(result);
-                if (temp < 1 || temp > 1000)
+                if (temp < 1 || temp > 10000)
                 {
                     throw new InvalidInputException("Invalid input Population Count set to 20");
                 }
@@ -251,7 +253,7 @@ namespace MultiThreadingConsoleApp
                 int mapX = MapXSelect();
                 int mapY = MapYSelect();
                 int peopleCount = PeopleCountSelect();
-                int infectedCountSelect = InfectedCountSelect();
+                int infectedCountSelect = InfectedCountSelect(peopleCount);
                 int mode = ZombieModeSelect(); 
 
                 threadCount = ThreadCountSelect();

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\StatusEnum.cs" />
     <Compile Include="UI\InvalidInputException.cs" />
     <Compile Include="IO\Data.cs" />
     <Compile Include="Simulation\ISimulation.cs" />

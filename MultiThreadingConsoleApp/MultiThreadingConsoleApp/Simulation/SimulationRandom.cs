@@ -40,7 +40,7 @@ namespace MultiThreadingConsoleApp
 
         public  Data data;
 
-        public  List<bool> infectedPeopleStart;
+        public  List<StatusEnum> infectedPeopleStart;
         public  Map map;
 
         public  Task timerThread;
@@ -109,11 +109,11 @@ namespace MultiThreadingConsoleApp
 
             InfectRandomPeople(globalPersonDictionary, infectedCount);
 
-            infectedPeopleStart = new List<bool>();
+            infectedPeopleStart = new List<StatusEnum>();
 
             foreach (var item in globalPersonDictionary.Values)
             {
-                infectedPeopleStart.Add(item.IsInfected);
+                infectedPeopleStart.Add(item.Status);
             }
 
             List<ConcurrentDictionary<int, Person>> listDictionary = new List<ConcurrentDictionary<int, Person>>();
@@ -225,7 +225,7 @@ namespace MultiThreadingConsoleApp
                 data.personList = globalPersonDictionary.Values.ToList();
                 for (int i = 0; i < infectedPeopleStart.Count; i++)
                 {
-                    data.personList[i].IsInfected = infectedPeopleStart[i];
+                    data.personList[i].Status = infectedPeopleStart[i];
                 }
                 FileHandler.WriteToFile(data.SaveContent(),true);
 
@@ -243,11 +243,11 @@ namespace MultiThreadingConsoleApp
 
             foreach (Person item in infectedPersonList)
             {
-                if (item.IsInfected)
+                if (item.Status == StatusEnum.Infected)
                 {
                     foreach (Person victim in infectedPersonList)
                     {
-                        victim.IsInfected = true;
+                        victim.Status = StatusEnum.Infected;
                     }
                     break;
                 }
@@ -295,12 +295,7 @@ namespace MultiThreadingConsoleApp
 
         public int getInfectedPeopleCount(ConcurrentDictionary<int, Person> personDictionary)
         {
-            return personDictionary.Where(x => x.Value.IsInfected).ToList().Count;
-        }
-
-        public void InfectOnePerson(ConcurrentDictionary<int, Person> personDictionary, int id)
-        {
-            personDictionary[id].IsInfected = true;
+            return personDictionary.Where(x => x.Value.Status == StatusEnum.Infected).ToList().Count;
         }
 
         public void InfectRandomPeople(ConcurrentDictionary<int, Person> personDictionary, int count)
@@ -316,7 +311,7 @@ namespace MultiThreadingConsoleApp
                 id = random.Next(count);
                 if (!alreadyInfected.Contains(id))
                 {
-                    personDictionary[id].IsInfected = true;
+                    personDictionary[id].Status = StatusEnum.Infected;
                     alreadyInfected.Add(id);
                 }
             }
@@ -328,7 +323,7 @@ namespace MultiThreadingConsoleApp
             foreach (var item in personDictionary)
             {
                 Thinking();
-                if (!item.Value.IsInfected)
+                if (item.Value.Status != StatusEnum.Infected)
                 {
                     RandomMove(item.Value, mapXMax, mapYMax);
                 }
@@ -343,7 +338,7 @@ namespace MultiThreadingConsoleApp
 
         public void Thinking()
         {
-            Thread.Sleep(1);
+            //Thread.Sleep(1);
         }
 
         public void MovePeople(ConcurrentDictionary<int, Person> personDictionary)
@@ -364,7 +359,7 @@ namespace MultiThreadingConsoleApp
 
             double closestDistance = double.MaxValue;
 
-            List<Person> notInfectedPersonList = globalpersonDictionary.Values.Where(x => !x.IsInfected).ToList();
+            List<Person> notInfectedPersonList = globalpersonDictionary.Values.Where(x => x.Status != StatusEnum.Infected).ToList();
 
             if (notInfectedPersonList.Count > 0)
             {

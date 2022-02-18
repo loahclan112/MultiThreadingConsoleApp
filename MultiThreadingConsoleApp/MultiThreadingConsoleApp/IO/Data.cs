@@ -29,18 +29,18 @@ namespace MultiThreadingConsoleApp
 
             List<Person> personlistTemp = new List<Person>();
             Person temp;
-            bool isInfectedtemp;
+            StatusEnum status;
             List<Point> temppositions;
             for (int i = 2; i < lines.Count; i++)
             {
                 temppositions = new List<Point>();
-                isInfectedtemp = lines[i].Split('|')[0] == "True" ? true : false;
+                status = (StatusEnum)Enum.Parse(typeof(StatusEnum),lines[i].Split('|')[0]);
                 foreach (var item in lines[i].Split('|')[1].Split(' '))
                 {
                     temppositions.Add(new Point(item));
                 }
 
-                temp = new Person(isInfectedtemp,temppositions);
+                temp = new Person(status,temppositions);
                 personlistTemp.Add(temp);
             }
 
@@ -57,7 +57,7 @@ namespace MultiThreadingConsoleApp
             string personData = String.Empty;
             foreach (var item in this.personList)
             {
-                personData += item.IsInfected + "|";
+                personData += item.Status + "|";
                 personData += String.Join(" ", item.DonePositions.Select(z => z.ToString()));
                 lines.Add(personData);
                 personData = String.Empty;

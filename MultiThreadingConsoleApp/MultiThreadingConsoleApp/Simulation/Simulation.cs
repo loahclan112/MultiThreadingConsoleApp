@@ -33,7 +33,7 @@ namespace MultiThreadingConsoleApp
 
         public Map map;
 
-        public List<bool> infectedPeopleStart;
+        public List<StatusEnum> infectedPeopleStart;
 
         public Task timerThread;
 
@@ -88,18 +88,18 @@ namespace MultiThreadingConsoleApp
             mapYMax = data.mapY;
 
             peopleCount = data.personList.Count;
-            infectedCount = data.personList.Where(x => x.IsInfected).ToList().Count;
+            infectedCount = data.personList.Where(x => x.Status == StatusEnum.Infected).ToList().Count;
 
             map = new Map(mapXMax, mapYMax);
 
             globalPersonDictionary = InitPersonDictionary(data.personList);
 
 
-            infectedPeopleStart = new List<bool>();
+            infectedPeopleStart = new List<StatusEnum>();
 
             foreach (var item in globalPersonDictionary.Values)
             {
-                infectedPeopleStart.Add(item.IsInfected);
+                infectedPeopleStart.Add(item.Status);
             }
 
             List<ConcurrentDictionary<int, Person>> listDictionary = new List<ConcurrentDictionary<int, Person>>();
@@ -204,7 +204,7 @@ namespace MultiThreadingConsoleApp
                 data.personList = globalPersonDictionary.Values.ToList();
                 for (int i = 0; i < infectedPeopleStart.Count; i++)
                 {
-                    data.personList[i].IsInfected = infectedPeopleStart[i];
+                    data.personList[i].Status = infectedPeopleStart[i];
                 }
                 FileHandler.WriteToFile(data.SaveContent(),false);
 
@@ -223,11 +223,11 @@ namespace MultiThreadingConsoleApp
 
             foreach (Person item in infectedPersonList)
             {
-                if (item.IsInfected)
+                if (item.Status == StatusEnum.Infected)
                 {
                     foreach (Person victim in infectedPersonList)
                     {
-                        victim.IsInfected = true;
+                        victim.Status = StatusEnum.Infected;
                     }
                     break;
                 }
@@ -237,7 +237,7 @@ namespace MultiThreadingConsoleApp
 
         public void Thinking()
         {
-            Thread.Sleep(1);
+            //Thread.Sleep(1);
             /*
             for (int i = 0; i < 50000000; i++){ }
             */
@@ -266,7 +266,7 @@ namespace MultiThreadingConsoleApp
         public int getInfectedPeopleCount(ConcurrentDictionary<int, Person> personDictionary)
         {
 
-            return personDictionary.Where(x => x.Value.IsInfected).ToList().Count;
+            return personDictionary.Where(x => x.Value.Status == StatusEnum.Infected).ToList().Count;
         }
 
 

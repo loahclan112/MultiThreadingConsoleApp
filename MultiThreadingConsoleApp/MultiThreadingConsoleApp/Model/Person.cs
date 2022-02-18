@@ -15,14 +15,35 @@ namespace MultiThreadingConsoleApp
         int texture = 1;
         ConsoleColor color = ConsoleColor.White;
         int speed = 1;
-        bool isInfected = false;
+        StatusEnum status = StatusEnum.Susceptible;
 
         public int Id { get => id; set => id = value; }
         public Point Position { get => position; set => position = value; }
         public int Texture { get => texture; set => texture = value; }
         public int Speed { get => speed; set => speed = value; }
         public ConsoleColor Color { get => color; set => color = value; }
-        public bool IsInfected { get => isInfected; set { isInfected = value; if (isInfected) Color = ConsoleColor.Red; } }
+        public StatusEnum Status { get => status;
+            set
+            {
+                status = value;
+
+                switch (status)
+                {
+                    case StatusEnum.Susceptible:
+                        Color = ConsoleColor.White;
+                        break;
+                    case StatusEnum.Infected:
+                        Color = ConsoleColor.Red;
+                        break;
+                    case StatusEnum.Recovered:
+                        Color = ConsoleColor.Blue;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        }
         public Point PreviousPosition { get => previousPosition; set => previousPosition = value; }
         public List<Point> DonePositions { get => donePositions; set => donePositions = value; }
 
@@ -44,11 +65,11 @@ namespace MultiThreadingConsoleApp
             commonId++;
         }
 
-        public Person(bool isInfected, List<Point> points) 
+        public Person(StatusEnum status, List<Point> points) 
         {
           
             this.Id = commonId;
-            this.IsInfected = isInfected;
+            this.Status = status;
             this.remainingPositions = points;
             this.Position = points[0];
             this.previousPosition = this.Position;
