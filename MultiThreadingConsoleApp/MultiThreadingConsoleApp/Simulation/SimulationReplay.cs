@@ -20,7 +20,7 @@ namespace MultiThreadingConsoleApp.Simulation
 
         public SimulationReplay(int threadCount = 1, bool isMapVisible=true) 
         {
-            ThreadCount = ThreadCount;
+            ThreadCount = threadCount;
             IsMapVisible = isMapVisible; 
         }
 
@@ -35,6 +35,7 @@ namespace MultiThreadingConsoleApp.Simulation
 
             MapXMax = data.MapX;
             MapYMax = data.MapY;
+            RecoveryRate = data.RecoveryRate;
 
             PeopleCount = data.PersonList.Count;
             InfectedCount = data.PersonList.Where(x => x.Status == StatusEnum.Infected).ToList().Count;
@@ -109,7 +110,12 @@ namespace MultiThreadingConsoleApp.Simulation
 
         public override void Thinking()
         {
+            //500000
+            for (int i = 0; i < 500000; i++)
+            {
 
+            }
+           
         }
 
         public override void MovePeople(ConcurrentDictionary<int, Person> personDictionary)

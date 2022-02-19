@@ -13,30 +13,34 @@ namespace MultiThreadingConsoleApp
 
         private List<Person> personList = new List<Person>();
 
+        private int recoveryRate;
+
         public int MapX { get => mapX; set => mapX = value; }
         public int MapY { get => mapY; set => mapY = value; }
         public List<Person> PersonList { get => personList; set => personList = value; }
+        public int RecoveryRate { get => recoveryRate; set => recoveryRate = value; }
 
         public Data()
         {
 
         }
 
-        public Data(int mapX, int mapY, List<Person> personList)
+        public Data(int mapX, int mapY, int recoveryRate, List<Person> personList)
         {
             this.MapX = mapX;
             this.MapY = mapY;
             this.PersonList = personList;
+            this.RecoveryRate = recoveryRate;
         }
 
         public Data LoadData(List<string> lines) {
-            Data data = new Data(Convert.ToInt32(lines[0]), Convert.ToInt32(lines[1]), new List<Person>());
+            Data data = new Data(Convert.ToInt32(lines[0]), Convert.ToInt32(lines[1]), Convert.ToInt32(lines[2]), new List<Person>());
 
             List<Person> personlistTemp = new List<Person>();
             Person temp;
             StatusEnum status;
             List<Point> temppositions;
-            for (int i = 2; i < lines.Count; i++)
+            for (int i = 3; i < lines.Count; i++)
             {
                 temppositions = new List<Point>();
                 status = (StatusEnum)Enum.Parse(typeof(StatusEnum),lines[i].Split('|')[0]);
@@ -58,6 +62,7 @@ namespace MultiThreadingConsoleApp
             List<string> lines = new List<string>();
             lines.Add(MapX.ToString());
             lines.Add(MapY.ToString());
+            lines.Add(RecoveryRate.ToString());
 
             string personData = String.Empty;
             foreach (var item in this.PersonList)

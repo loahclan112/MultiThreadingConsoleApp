@@ -14,8 +14,10 @@ namespace MultiThreadingConsoleApp
         Point position;
         int texture = 1;
         ConsoleColor color = ConsoleColor.White;
-        int speed = 1;
         StatusEnum status = StatusEnum.Susceptible;
+        int speed = 1;
+        int recoveryRate = 0;
+
 
         public int Id { get => id; set => id = value; }
         public Point Position { get => position; set => position = value; }
@@ -46,15 +48,7 @@ namespace MultiThreadingConsoleApp
         }
         public Point PreviousPosition { get => previousPosition; set => previousPosition = value; }
         public List<Point> DonePositions { get => donePositions; set => donePositions = value; }
-
-        public Person(int x, int y)
-        {
-            this.Id = commonId;
-            this.Position = new Point(x, y);
-            this.previousPosition = this.position;
-            DonePositions.Add(this.Position);
-            commonId++;
-        }
+        public int RecoveryRate { get => recoveryRate; set => recoveryRate = value; }
 
         public Person(Point point)
         {
@@ -77,6 +71,19 @@ namespace MultiThreadingConsoleApp
             DonePositions.Add(this.Position);
             commonId++;
         }
+
+        public void StatusUpdate() {
+            if (this.Status == StatusEnum.Infected)
+            {
+                if (RecoveryRate <= 0)
+                {
+                    this.Status = StatusEnum.Recovered;
+                    return;
+                }
+                    RecoveryRate--;
+            }
+        }
+
 
         public Point Move(int dx, int dy, int boundaryX, int boundaryY)
         {

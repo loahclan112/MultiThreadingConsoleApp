@@ -13,7 +13,6 @@ namespace MultiThreadingConsoleApp.Simulation
 
     public class SimulationGenerate : SimulationBase
     {
-        public int MapXMax = 150;
         public bool isZombieModeOn;
         public  Data data;
         public  List<StatusEnum> infectedPeopleStart;
@@ -21,7 +20,7 @@ namespace MultiThreadingConsoleApp.Simulation
         public  Task printerThread;
 
 
-        public SimulationGenerate(int threadCount = 1, int MapXMax = 150, int MapYMax = 75, int PeopleCount = 20, bool isMapVisible = true, bool isZombieModeOn = true, int InfectedCount = 1 )
+        public SimulationGenerate(int threadCount = 1, int MapXMax = 150, int MapYMax = 75, int PeopleCount = 20, bool isMapVisible = true, bool isZombieModeOn = true, int InfectedCount = 1, int recoveryRate = 3 )
         {
             this.ThreadCount = threadCount;
             this.IsMapVisible = isMapVisible;
@@ -30,6 +29,7 @@ namespace MultiThreadingConsoleApp.Simulation
             this.PeopleCount = PeopleCount;
             this.isZombieModeOn = isZombieModeOn;
             this.InfectedCount = InfectedCount;
+            this.RecoveryRate = recoveryRate;
         }
 
         public override void StartSimulation()
@@ -46,9 +46,10 @@ namespace MultiThreadingConsoleApp.Simulation
             data = new Data();
             data.MapX = MapXMax;
             data.MapY = MapYMax;
+            data.RecoveryRate = RecoveryRate;
 
 
-            GlobalPersonDictionary = InitPersonDictionaryRandom(PeopleCount);
+            GlobalPersonDictionary = InitPersonDictionaryRandom(PeopleCount,RecoveryRate);
 
             InfectRandomPeople(GlobalPersonDictionary, InfectedCount);
 
@@ -130,9 +131,10 @@ namespace MultiThreadingConsoleApp.Simulation
         public void ThreadMethodZombie(ConcurrentDictionary<int, Person> personDictionary, ConcurrentDictionary<int, Person> GlobalPersonDictionary)
         {
             int index = Threads.FindIndex(x => x.Id == Task.CurrentId);
-            while (InfectedCount != PeopleCount)
+            while (InfectedCount < PeopleCount && InfectedCount > 0)
             {
                 IsDoneWithMovement[index] = false;
+                PeopleStatusUpdate(personDictionary);
                 MovePeopleZombie(personDictionary, GlobalPersonDictionary);
                 IsDoneWithMovement[index] = true;
 
@@ -247,13 +249,14 @@ namespace MultiThreadingConsoleApp.Simulation
             
         }
 
-        public ConcurrentDictionary<int, Person> InitPersonDictionaryRandom(int PeopleCount)
+        public ConcurrentDictionary<int, Person> InitPersonDictionaryRandom(int PeopleCount, int recoveryRate)
         {
             ConcurrentDictionary<int, Person> personDictionary = new ConcurrentDictionary<int, Person>();
 
             for (int i = 0; i < PeopleCount; i++)
             {
                 Person temp = GeneratePersonInsideBoundaries(0, MapXMax, 0, MapYMax);
+                temp.RecoveryRate = recoveryRate;
                 personDictionary.TryAdd(temp.Id, temp);
             }
 

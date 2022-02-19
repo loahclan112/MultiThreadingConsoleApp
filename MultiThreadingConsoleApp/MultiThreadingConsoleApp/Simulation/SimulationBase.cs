@@ -26,6 +26,8 @@ namespace MultiThreadingConsoleApp.Simulation
         private int mapYMax = 0;
         private Stopwatch sw = new Stopwatch();
         private int mapXMax = 0;
+        private int recoveryRate = 0;
+        private int infectionRange = 1;
 
         public bool IsDone { get => isDone; set => isDone = value; }
         public bool IsPrinterDone { get => isPrinterDone; set => isPrinterDone = value; }
@@ -42,6 +44,8 @@ namespace MultiThreadingConsoleApp.Simulation
         public int MapYMax { get => mapYMax; set => mapYMax = value; }
         public Stopwatch Sw { get => sw; set => sw = value; }
         public int MapXMax { get => mapXMax; set => mapXMax = value; }
+        public int RecoveryRate { get => recoveryRate; set => recoveryRate = value; }
+        public int InfectionRange { get => infectionRange; set => infectionRange = value; }
 
         public int getInfectedPeopleCount(ConcurrentDictionary<int, Person> personDictionary)
         {
@@ -50,7 +54,7 @@ namespace MultiThreadingConsoleApp.Simulation
 
         public List<Person> InfectPerson(ConcurrentDictionary<int, Person> globalPersonDictionary, Point pos)
         {
-            List<Person> infectedPersonList = globalPersonDictionary.Values.Where(x => Math.Abs(x.Position.X - pos.X) < 3 && Math.Abs(x.Position.Y - pos.Y) < 1).ToList();
+            List<Person> infectedPersonList = globalPersonDictionary.Values.Where(x => Math.Abs(x.Position.X - pos.X) < 3 + InfectionRange && Math.Abs(x.Position.Y - pos.Y) < 1 + InfectionRange).ToList();
             if (infectedPersonList.Count <= 1)
             {
                 return infectedPersonList;
@@ -69,12 +73,14 @@ namespace MultiThreadingConsoleApp.Simulation
             }
             return infectedPersonList;
         }
+        
         public ConcurrentDictionary<int, Person> InitPersonDictionary(List<Person> personList)
         {
             ConcurrentDictionary<int, Person> personDictionary = new ConcurrentDictionary<int, Person>();
 
             foreach (var item in personList)
             {
+                item.RecoveryRate = recoveryRate;
                 personDictionary.TryAdd(item.Id, item);
             }
 
@@ -176,21 +182,19 @@ namespace MultiThreadingConsoleApp.Simulation
             EndCheck();
         }
 
-
-
-
         public abstract void Thinking();
 
         public virtual void ThreadMethod(ConcurrentDictionary<int, Person> personDictionary)
         {
             int index = Threads.FindIndex(x => x.Id == Task.CurrentId);
-            while (InfectedCount < PeopleCount)
+            while (InfectedCount < PeopleCount && InfectedCount > 0)
             {
+                
                 lock (MyLocks.lockIsDoneMovementObject)
                 {
                     IsDoneWithMovement[index] = false;
                 }
-
+                PeopleStatusUpdate(personDictionary);
                 MovePeople(personDictionary);
 
                 lock (MyLocks.lockIsDoneMovementObject)
@@ -211,5 +215,13 @@ namespace MultiThreadingConsoleApp.Simulation
         }
 
         public abstract void EndCheck();
+
+        public void PeopleStatusUpdate(ConcurrentDictionary<int, Person> personDictionary)
+        {
+            foreach (var item in personDictionary.Values)
+            {
+                item.StatusUpdate();
+            }
+        }
     }
 }

@@ -95,6 +95,33 @@ namespace MultiThreadingConsoleApp
 
         }
 
+        private int RecoveryRateSelect()
+        {
+            Console.Write("Select Recovery rate (Suggested: 1 - 6):  ");
+            string result = GetUserInput();
+
+            int temp = -1;
+
+            try
+            {
+                temp = ConvertToInt(result);
+                if (temp < 1 || temp > 1000)
+                {
+                    throw new InvalidInputException("Invalid input Recovery rate set to 3");
+                }
+
+            }
+            catch (InvalidInputException e)
+            {
+
+                Console.WriteLine(e.msg);
+                temp = 3;
+            }
+
+            return temp;
+
+        }
+
         private int ThreadCountSelect()
         {
             Console.Write("Select Thread Count (1 - 6):  ");
@@ -105,7 +132,7 @@ namespace MultiThreadingConsoleApp
             try
             {
                 temp = ConvertToInt(result);
-                if (temp < 1 || temp > 6)
+                if (temp < 1 || temp > 10)
                 {
                     throw new InvalidInputException("Invalid input ThreadCount set to 1");
                 }
@@ -253,12 +280,13 @@ namespace MultiThreadingConsoleApp
                 int mapY = MapYSelect();
                 int peopleCount = PeopleCountSelect();
                 int infectedCountSelect = InfectedCountSelect(peopleCount);
+                int recoveryRate = RecoveryRateSelect();
                 int mode = ZombieModeSelect(); 
 
                 threadCount = ThreadCountSelect();
                 isMapVisible = VisualizeFlagSelect();
 
-                return new SimulationGenerate(threadCount,mapX,mapY,peopleCount,isMapVisible == 1, mode == 1, infectedCountSelect);
+                return new SimulationGenerate(threadCount,mapX,mapY,peopleCount,isMapVisible == 1, mode == 1, infectedCountSelect, recoveryRate);
 
             }
         }
