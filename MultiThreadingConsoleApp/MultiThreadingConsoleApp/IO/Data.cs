@@ -8,10 +8,15 @@ namespace MultiThreadingConsoleApp
     public class Data
     {
 
-        public  int mapX;
-        public  int mapY;
+        private int mapX;
+        private int mapY;
 
-        public  List<Person> personList = new List<Person>();
+        private List<Person> personList = new List<Person>();
+
+        public int MapX { get => mapX; set => mapX = value; }
+        public int MapY { get => mapY; set => mapY = value; }
+        public List<Person> PersonList { get => personList; set => personList = value; }
+
         public Data()
         {
 
@@ -19,9 +24,9 @@ namespace MultiThreadingConsoleApp
 
         public Data(int mapX, int mapY, List<Person> personList)
         {
-            this.mapX = mapX;
-            this.mapY = mapY;
-            this.personList = personList;
+            this.MapX = mapX;
+            this.MapY = mapY;
+            this.PersonList = personList;
         }
 
         public Data LoadData(List<string> lines) {
@@ -44,18 +49,18 @@ namespace MultiThreadingConsoleApp
                 personlistTemp.Add(temp);
             }
 
-            data.personList = personlistTemp;
+            data.PersonList = personlistTemp;
             return data;
         }
 
         public List<string> SaveContent()
         {
             List<string> lines = new List<string>();
-            lines.Add(mapX.ToString());
-            lines.Add(mapY.ToString());
+            lines.Add(MapX.ToString());
+            lines.Add(MapY.ToString());
 
             string personData = String.Empty;
-            foreach (var item in this.personList)
+            foreach (var item in this.PersonList)
             {
                 personData += item.Status + "|";
                 personData += String.Join(" ", item.DonePositions.Select(z => z.ToString()));

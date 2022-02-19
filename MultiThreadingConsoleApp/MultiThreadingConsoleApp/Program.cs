@@ -24,7 +24,7 @@ namespace MultiThreadingConsoleApp
 
                 simulation.StartSimulation();
 
-                while (!simulation.IsDone())
+                while (!simulation.CheckIsDone())
                 {
 
                 }

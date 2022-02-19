@@ -5,5 +5,6 @@
         public static object lockInfectedCountObject = new object();
         public static object lockUpdateMapObject = new object();
         public static object lockglobalDictionaryObject = new object();
+        public static object lockIsDoneMovementObject = new object();
     }
 }

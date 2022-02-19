@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiThreadingConsoleApp.Simulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace MultiThreadingConsoleApp
 {
-
-
 
     class UIConsole
     {
@@ -246,7 +245,7 @@ namespace MultiThreadingConsoleApp
                 threadCount = ThreadCountSelect();
                 isMapVisible = VisualizeFlagSelect();
 
-                return new Simulation(threadCount, isMapVisible == 1);
+                return new SimulationReplay(threadCount, isMapVisible == 1);
             }
             else
             {
@@ -259,7 +258,7 @@ namespace MultiThreadingConsoleApp
                 threadCount = ThreadCountSelect();
                 isMapVisible = VisualizeFlagSelect();
 
-                return new SimulationRandom(threadCount,mapX,mapY,peopleCount,isMapVisible == 1, mode == 1, infectedCountSelect);
+                return new SimulationGenerate(threadCount,mapX,mapY,peopleCount,isMapVisible == 1, mode == 1, infectedCountSelect);
 
             }
         }

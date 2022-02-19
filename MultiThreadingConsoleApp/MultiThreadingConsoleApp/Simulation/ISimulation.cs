@@ -11,8 +11,9 @@ namespace MultiThreadingConsoleApp
 {
    public interface ISimulation
     {
+        void EndCheck();
 
-        bool IsDone();
+        bool CheckIsDone();
 
         void StartSimulation();
 
@@ -20,7 +21,7 @@ namespace MultiThreadingConsoleApp
 
         void StartPrinter();
 
-        void PrintMap(ConcurrentDictionary<int, Person> globalPersonDictionary, bool isMapVisible);
+        void Synchronize(ConcurrentDictionary<int, Person> globalPersonDictionary, bool isMapVisible);
         List<Person> InfectPerson(ConcurrentDictionary<int, Person> globalPersonDictionary, Point pos);
        
         void Thinking();
