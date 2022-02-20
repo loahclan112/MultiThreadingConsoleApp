@@ -7,7 +7,7 @@ namespace MultiThreadingConsoleApp
     {
         public static int commonId = 0;
         int id;
-        public List<Point> remainingPositions = new List<Point>();
+        private List<Point> remainingPositions = new List<Point>();
         private List<Point> donePositions = new List<Point>();
 
         Point previousPosition;
@@ -16,7 +16,8 @@ namespace MultiThreadingConsoleApp
         ConsoleColor color = ConsoleColor.White;
         StatusEnum status = StatusEnum.Susceptible;
         int speed = 1;
-        int recoveryRate = 0;
+        double recoveryRate = 0;
+        double infectionRate = 1;
 
 
         public int Id { get => id; set => id = value; }
@@ -48,7 +49,9 @@ namespace MultiThreadingConsoleApp
         }
         public Point PreviousPosition { get => previousPosition; set => previousPosition = value; }
         public List<Point> DonePositions { get => donePositions; set => donePositions = value; }
-        public int RecoveryRate { get => recoveryRate; set => recoveryRate = value; }
+        public double RecoveryRate { get => recoveryRate; set => recoveryRate = value; }
+        public double InfectionRate { get => infectionRate; set => infectionRate = value; }
+        public List<Point> RemainingPositions { get => remainingPositions; set => remainingPositions = value; }
 
         public Person(Point point)
         {
@@ -64,10 +67,10 @@ namespace MultiThreadingConsoleApp
           
             this.Id = commonId;
             this.Status = status;
-            this.remainingPositions = points;
+            this.RemainingPositions = points;
             this.Position = points[0];
             this.previousPosition = this.Position;
-            this.remainingPositions.RemoveAt(0);
+            this.RemainingPositions.RemoveAt(0);
             DonePositions.Add(this.Position);
             commonId++;
         }
@@ -100,8 +103,8 @@ namespace MultiThreadingConsoleApp
             this.previousPosition = this.position;
            
 
-            this.position = this.remainingPositions[0];
-            this.remainingPositions.RemoveAt(0);
+            this.position = this.RemainingPositions[0];
+            this.RemainingPositions.RemoveAt(0);
             this.DonePositions.Add(this.position);
             return this.position;
         }

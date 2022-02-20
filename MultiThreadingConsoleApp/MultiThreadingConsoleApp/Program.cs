@@ -20,8 +20,8 @@ namespace MultiThreadingConsoleApp
             {
                 Console.Clear();
                 ISimulation simulation = uIConsole.SimulationSelector();
-                Console.Clear();
 
+                Console.Clear();
                 simulation.StartSimulation();
 
                 while (!simulation.CheckIsDone())

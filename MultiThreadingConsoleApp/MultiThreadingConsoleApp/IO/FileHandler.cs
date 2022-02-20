@@ -6,6 +6,7 @@ namespace MultiThreadingConsoleApp
     public static class FileHandler
     {
         static string file = Directory.GetCurrentDirectory() + "\\Data.txt";
+        static string fileExcel = Directory.GetCurrentDirectory() + "\\DataExcel.txt";
         static string fileGenerated = Directory.GetCurrentDirectory() + "\\DataGenerated.txt";
 
         public static List<string> ReadFromFile()
@@ -27,5 +28,14 @@ namespace MultiThreadingConsoleApp
             }
             File.WriteAllLines(file, outputContent);
         }
+
+        public static void WriteToFileExcel(List<string> outputContent)
+        {
+            string file = FileHandler.fileExcel;
+
+            File.WriteAllLines(file, outputContent);
+        }
+
+
     }
 }

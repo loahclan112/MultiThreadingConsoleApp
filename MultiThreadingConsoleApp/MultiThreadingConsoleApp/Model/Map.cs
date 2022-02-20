@@ -39,10 +39,8 @@ namespace MultiThreadingConsoleApp
             {
                 Point temp = item.Value.Position;
                 int count = counts[item.Key];
-                lock (MyLocks.lockUpdateMapObject) {
-                    points[temp.X, temp.Y] = count.ToString();
-                }
-
+                points[temp.X, temp.Y] = count.ToString();
+               
                 lock (MyLocks.lockConsoleObject) {
                     ConsoleColor c = item.Value.Color;
                     Console.ForegroundColor = c;

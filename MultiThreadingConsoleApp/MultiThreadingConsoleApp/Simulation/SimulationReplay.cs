@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiThreadingConsoleApp.Utilities;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,13 +12,6 @@ namespace MultiThreadingConsoleApp.Simulation
 {
      public class SimulationReplay : SimulationBase
      {
-        public  int MapXMax = 0;
-        public Data data;
-        public List<StatusEnum> infectedPeopleStart;
-        public Task timerThread;
-        public Task printerThread;
-
-
         public SimulationReplay(int threadCount = 1, bool isMapVisible=true) 
         {
             ThreadCount = threadCount;
@@ -26,33 +20,34 @@ namespace MultiThreadingConsoleApp.Simulation
 
         public override void StartSimulation() {
             Console.CursorVisible = false;
-            timerThread = new Task(StartTimer, TaskCreationOptions.LongRunning);
-            printerThread = new Task(StartPrinter, TaskCreationOptions.LongRunning);
+            TimerThread = new Task(StartTimer, Source.Token, TaskCreationOptions.LongRunning);
+            PrinterThread = new Task(StartPrinter, Source.Token, TaskCreationOptions.LongRunning);
             IsDoneWithMovement = new List<bool>();
-            data = new Data();
+            Data = new Data();
 
-            data = data.LoadData(FileHandler.ReadFromFile());
+            Data = Data.LoadData(FileHandler.ReadFromFile());
 
-            MapXMax = data.MapX;
-            MapYMax = data.MapY;
-            RecoveryRate = data.RecoveryRate;
+            MapXMax = Data.MapX;
+            MapYMax = Data.MapY;
+            RecoveryRate = Data.RecoveryRate;
+            InfectionRate = Data.InfectionRate;
 
-            PeopleCount = data.PersonList.Count;
-            InfectedCount = data.PersonList.Where(x => x.Status == StatusEnum.Infected).ToList().Count;
+            PeopleCount = Data.PersonList.Count;
+            InfectedCount = Data.PersonList.Where(x => x.Status == StatusEnum.Infected).ToList().Count;
 
             Map = new Map(MapXMax, MapYMax);
 
-            GlobalPersonDictionary = InitPersonDictionary(data.PersonList);
+            GlobalPersonDictionary = InitPersonDictionary(Data.PersonList);
 
 
-            infectedPeopleStart = new List<StatusEnum>();
+            InfectedPeopleStart = new List<StatusEnum>();
 
             foreach (var item in GlobalPersonDictionary.Values)
             {
-                infectedPeopleStart.Add(item.Status);
+                InfectedPeopleStart.Add(item.Status);
             }
 
-            List<ConcurrentDictionary<int, Person>> listDictionary = new List<ConcurrentDictionary<int, Person>>();
+            ListDictionary = new List<Dictionary<int, Person>>();
 
             Dictionary<int, Person> personDictionarytemp = new Dictionary<int, Person>();
 
@@ -67,20 +62,20 @@ namespace MultiThreadingConsoleApp.Simulation
                     personDistributedCount++;
 
                 }
-                listDictionary.Add(new ConcurrentDictionary<int, Person>(personDictionarytemp));
+                ListDictionary.Add(new Dictionary<int, Person>(personDictionarytemp));
                 personDictionarytemp = new Dictionary<int, Person>();
             }
 
             for (int k = 1; k <= PeopleCount - personDistributedCount; k++)
             {
 
-                listDictionary[ThreadCount - 1].TryAdd(PeopleCount - k, GlobalPersonDictionary[PeopleCount - k]);
+                ListDictionary[ThreadCount - 1].Add(PeopleCount - k, GlobalPersonDictionary[PeopleCount - k]);
             }
 
-            foreach (var item in listDictionary)
+            foreach (var item in ListDictionary)
             {
-                IsDoneWithMovement.Add(false);
-               Threads.Add(new Task(() => ThreadMethod(item), TaskCreationOptions.LongRunning));
+               IsDoneWithMovement.Add(false);
+               Threads.Add(new Task(() => ThreadMethod(new ConcurrentDictionary<int,Person>(item)), TaskCreationOptions.LongRunning));
             }
 
             foreach (var item in Threads)
@@ -88,48 +83,83 @@ namespace MultiThreadingConsoleApp.Simulation
                 item.Start();
             }
 
-            timerThread.Start();
-            printerThread.Start();        
+            TimerThread.Start();
+            PrinterThread.Start();        
         }
 
 
         public override void EndCheck() {
+            if (InfectedCount >= PeopleCount || InfectedCount <= 0)
+            {
+                Source.Cancel();
 
+            }
             if (Source.IsCancellationRequested)
             {
-                data.PersonList = GlobalPersonDictionary.Values.ToList();
-                for (int i = 0; i < infectedPeopleStart.Count; i++)
+                Task.WaitAll(Threads.ToArray());
+                for (int i = 0; i < Threads.Count; i++)
                 {
-                    data.PersonList[i].Status = infectedPeopleStart[i];
+                    Threads[i].Dispose();
                 }
-                FileHandler.WriteToFile(data.SaveContent(), false);
+                Data.PersonList = GlobalPersonDictionary.Values.ToList();
+                for (int i = 0; i < InfectedPeopleStart.Count; i++)
+                {
+                    Data.PersonList[i].Status = InfectedPeopleStart[i];
+                }
+                FileHandler.WriteToFile(Data.SaveContent(), false);
+                FileHandler.WriteToFileExcel(Data.SaveCountContent());
                 Person.commonId = 0;
                 IsDone = true;
+                List<Task> remainingTasks = new List<Task>();
+
+                remainingTasks.Add(TimerThread);
+                remainingTasks.Add(PrinterThread);
+                Task.WaitAll(remainingTasks.ToArray());
+                for (int i = 0; i < remainingTasks.Count; i++)
+                {
+                    remainingTasks[i].Dispose();
+                }
             }
         }
 
-        public override void Thinking()
+        public override void CalculateInfection(ConcurrentDictionary<int, Person> personDictionary, Person person)
         {
-            //500000
-            for (int i = 0; i < 500000; i++)
+            if (IsMapVisible)
             {
-
+                for (int i = 0; i < 100; i++)
+                {
+                    person.InfectionRate = (double)StaticRandom.Rand(5, 11) / 10;
+                }
             }
-           
+            else {
+                for (int i = 0; i < 10000; i++)
+                {
+                    person.InfectionRate = (double)StaticRandom.Rand(5, 11) / 10;
+                }
+            }
+
         }
 
         public override void MovePeople(ConcurrentDictionary<int, Person> personDictionary)
         {
-            foreach (var item in personDictionary)
+            foreach (var item in personDictionary.Values)
             {
-                Thinking();
-                if (item.Value.remainingPositions.Count>0)
+                CalculateInfection(personDictionary, item);
+                if (item.RemainingPositions.Count>0)
                 {
-                    item.Value.Move();
+                   item.Move();
                 }
             }
         }
+
+        public bool ThreadMethodExitCondition2(ConcurrentDictionary<int, Person> personDictionary) {
+            return personDictionary.Values.Where(x => x.RemainingPositions.Count > 0).Count() <= 0;
+        }
+
+        public override bool ThreadMethodExitCondition(ConcurrentDictionary<int, Person> personDictionary)
+        {
+            return Source.IsCancellationRequested;
+        }
+
     }
-
-
 }
