@@ -11,7 +11,18 @@ namespace MultiThreadingConsoleApp
 
         public static List<string> ReadFromFile()
         {
-            return new List<string>(File.ReadAllLines(fileGenerated));
+            try
+            {
+                return new List<string>(File.ReadAllLines(fileGenerated));
+
+            }
+            catch (IOException)
+            {
+                System.Console.WriteLine("No files yet Generated to Replay! Please Select Generate option first!");
+                return new List<string>();
+                
+            }
+
         }
 
         public static List<string> ReadFromFile(string inputfile)

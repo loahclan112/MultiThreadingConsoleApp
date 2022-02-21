@@ -40,6 +40,10 @@ namespace MultiThreadingConsoleApp
         }
 
         public Data LoadData(List<string> lines) {
+            if (lines == null || lines.Count <=0)
+            {
+                return new Data();
+            }
             Data data = new Data(Convert.ToInt32(lines[0]), Convert.ToInt32(lines[1]), Convert.ToDouble(lines[2]), Convert.ToInt32(lines[3]), new List<Person>());
 
             List<Person> personlistTemp = new List<Person>();
