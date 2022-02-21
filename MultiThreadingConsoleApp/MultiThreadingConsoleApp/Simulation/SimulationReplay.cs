@@ -156,6 +156,5 @@ namespace MultiThreadingConsoleApp.Simulation
         {
             return Source.IsCancellationRequested;
         }
-
     }
 }
