@@ -30,12 +30,10 @@ namespace MultiThreadingConsoleApp.Simulation
 
         public override void StartSimulation()
         {
-          
             Console.CursorVisible = false;
+            IsDoneWithMovement = new List<bool>();
             TimerThread = new Task(StartTimer, Source.Token, TaskCreationOptions.LongRunning);
             PrinterThread = new Task(StartPrinter, Source.Token, TaskCreationOptions.LongRunning);
-
-            IsDoneWithMovement = new List<bool>();
 
             Map = new Map(MapXMax, MapYMax);
 
@@ -45,11 +43,8 @@ namespace MultiThreadingConsoleApp.Simulation
             Data.RecoveryRate = RecoveryRate;
             Data.InfectionRate = InfectionRate;
 
-
             GlobalPersonDictionary = InitPersonDictionaryRandom(PeopleCount,RecoveryRate);
-
             InfectRandomPeople(GlobalPersonDictionary, InfectedCount);
-
             InfectedPeopleStart = new List<StatusEnum>();
 
             foreach (var item in GlobalPersonDictionary.Values)
@@ -58,7 +53,6 @@ namespace MultiThreadingConsoleApp.Simulation
             }
 
             List<ConcurrentDictionary<int, Person>> listDictionary = new List<ConcurrentDictionary<int, Person>>();
-
             Dictionary<int, Person> personDictionarytemp = new Dictionary<int, Person>();
 
             int personDistributedCount = 0;
@@ -86,11 +80,10 @@ namespace MultiThreadingConsoleApp.Simulation
                 if (isZombieModeOn)
                 {
                     Threads.Add(new Task(() => ThreadMethodZombie(item, GlobalPersonDictionary), TaskCreationOptions.LongRunning));
-
                 }
-                else {
+                else 
+                {
                     Threads.Add(new Task(() => ThreadMethod(item), TaskCreationOptions.LongRunning));
-
                 }
             }
 
@@ -108,7 +101,6 @@ namespace MultiThreadingConsoleApp.Simulation
             if (InfectedCount >= PeopleCount || InfectedCount <= 0)
             {
                 Source.Cancel();
-
             }
             if (Source.IsCancellationRequested)
             {
@@ -251,7 +243,6 @@ namespace MultiThreadingConsoleApp.Simulation
             int dx = movementDirection.X;
             int dy = movementDirection.Y;
             Point point = p.Move(dx, dy, MapXMax, MapYMax);
-
         }
 
         public void RandomMove(Person p, int boundaryX, int boundaryY)
@@ -296,5 +287,4 @@ namespace MultiThreadingConsoleApp.Simulation
             return Source.IsCancellationRequested;
         }
     }
-
 }

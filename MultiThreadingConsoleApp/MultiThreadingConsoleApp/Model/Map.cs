@@ -29,7 +29,6 @@ namespace MultiThreadingConsoleApp
                     map[i, j] = " ";
                 }
             }
-
             return map;
         }
 

@@ -27,8 +27,6 @@ namespace MultiThreadingConsoleApp
         void MovePeople(ConcurrentDictionary<int, Person> personDictionary);
         ConcurrentDictionary<int, Person> InitPersonDictionary(List<Person> personList);
         void PeopleStatusUpdate(ConcurrentDictionary<int, Person> personDictionary);
-
-
     }
 
 }

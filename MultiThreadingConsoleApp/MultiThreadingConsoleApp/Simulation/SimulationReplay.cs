@@ -20,26 +20,23 @@ namespace MultiThreadingConsoleApp.Simulation
 
         public override void StartSimulation() {
             Console.CursorVisible = false;
+            IsDoneWithMovement = new List<bool>();
+
             TimerThread = new Task(StartTimer, Source.Token, TaskCreationOptions.LongRunning);
             PrinterThread = new Task(StartPrinter, Source.Token, TaskCreationOptions.LongRunning);
-            IsDoneWithMovement = new List<bool>();
+
             Data = new Data();
-
             Data = Data.LoadData(FileHandler.ReadFromFile());
-
             MapXMax = Data.MapX;
             MapYMax = Data.MapY;
             RecoveryRate = Data.RecoveryRate;
             InfectionRate = Data.InfectionRate;
-
             PeopleCount = Data.PersonList.Count;
             InfectedCount = Data.PersonList.Where(x => x.Status == StatusEnum.Infected).ToList().Count;
 
             Map = new Map(MapXMax, MapYMax);
 
             GlobalPersonDictionary = InitPersonDictionary(Data.PersonList);
-
-
             InfectedPeopleStart = new List<StatusEnum>();
 
             foreach (var item in GlobalPersonDictionary.Values)
@@ -48,11 +45,9 @@ namespace MultiThreadingConsoleApp.Simulation
             }
 
             ListDictionary = new List<Dictionary<int, Person>>();
-
             Dictionary<int, Person> personDictionarytemp = new Dictionary<int, Person>();
 
             int personDistributedCount = 0;
-
 
             for (int i = 0; i < ThreadCount; i++)
             {
@@ -152,7 +147,8 @@ namespace MultiThreadingConsoleApp.Simulation
             }
         }
 
-        public bool ThreadMethodExitCondition2(ConcurrentDictionary<int, Person> personDictionary) {
+        public bool ThreadMethodExitCondition2(ConcurrentDictionary<int, Person> personDictionary) 
+        {
             return personDictionary.Values.Where(x => x.RemainingPositions.Count > 0).Count() <= 0;
         }
 

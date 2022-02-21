@@ -18,7 +18,6 @@ namespace MultiThreadingConsoleApp.Simulation
         private int infectedCount = 4;
         private int susceptibleCount = 0;
         private int recoveredCount = 0;
-
         private int peopleCount = 20;
         private List<Task> threads = new List<Task>();
         private Task timerThread;
@@ -155,10 +154,7 @@ namespace MultiThreadingConsoleApp.Simulation
         }
 
         public virtual void Synchronize(bool isMapVisible)
-        {
-
-
-            
+        {      
             IsPrinterDone = false;
             int CursorPos = isMapVisible ? MapYMax : 0;
 
@@ -233,11 +229,8 @@ namespace MultiThreadingConsoleApp.Simulation
                 Console.ResetColor();
             }
 
-            
-
             IsPrinterDone = true;
-            EndCheck();
-            
+            EndCheck();         
         }
 
         public abstract void CalculateInfection(ConcurrentDictionary<int, Person> personDictionary, Person person);
@@ -252,7 +245,6 @@ namespace MultiThreadingConsoleApp.Simulation
 
             while (!ThreadMethodExitCondition(personDictionary))
             {
-
                 lock (MyLocks.lockIsDoneMovementObject)
                 {
                     IsDoneWithMovement[index.Value] = false;
@@ -261,19 +253,15 @@ namespace MultiThreadingConsoleApp.Simulation
 
                 MovePeople(personDictionary);
 
-
                 lock (MyLocks.lockIsDoneMovementObject)
                 {
                     IsDoneWithMovement[index.Value] = true;
-
                 }
 
                 while (IsDoneWithMovement[index.Value] && !IsPrinterDone)
                 {
 
-
-                }
-                
+                }   
             }
         }
 

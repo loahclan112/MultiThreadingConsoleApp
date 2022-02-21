@@ -7,15 +7,11 @@ namespace MultiThreadingConsoleApp
 {
     public class Data
     {
-
         private int mapX;
         private int mapY;
-
         private List<Person> personList = new List<Person>();
-
         private double recoveryRate;
         private double infectionRate;
-
 
         public int MapX { get => mapX; set => mapX = value; }
         public int MapY { get => mapY; set => mapY = value; }
@@ -98,7 +94,5 @@ namespace MultiThreadingConsoleApp
 
             return lines;
         }
-
-
     }
 }

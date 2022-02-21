@@ -20,7 +20,6 @@ namespace MultiThreadingConsoleApp
             this.X = x;
             this.Y = y;
         }
-
         public int X { get => x; set => x = value; }
         public int Y { get => y; set => y = value; }
 
@@ -36,7 +35,8 @@ namespace MultiThreadingConsoleApp
             return distance;
         }
 
-        public Point GetMovementDirectionToOtherPoint(Point point) {
+        public Point GetMovementDirectionToOtherPoint(Point point) 
+        {
 
             int x = 0;
             int y = 0;
@@ -100,9 +100,7 @@ namespace MultiThreadingConsoleApp
                 x = 1;
                 y = 1;
             }
-
-            return new Point(x,y);
-        
+            return new Point(x,y);   
         }
     }
 }

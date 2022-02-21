@@ -35,7 +35,5 @@ namespace MultiThreadingConsoleApp
 
             File.WriteAllLines(file, outputContent);
         }
-
-
     }
 }

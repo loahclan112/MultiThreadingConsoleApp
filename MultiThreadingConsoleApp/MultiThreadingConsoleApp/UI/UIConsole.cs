@@ -10,10 +10,10 @@ namespace MultiThreadingConsoleApp
 
     class UIConsole
     {
-        public string GetUserInput() {
+        public string GetUserInput() 
+        {
             return Console.ReadLine();
         }
-
         private int InfectedCountSelect(int populationCount)
         {
             Console.Write("Select Infected Person Count (Suggested 1 - peopleCount):  ");
@@ -38,7 +38,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
 
         private int SimulationTypeSelect() 
@@ -65,7 +64,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return simulationType;
-
         }
 
         private int PeopleCountSelect()
@@ -92,12 +90,11 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
 
         private double RecoveryRateSelect()
         {
-            Console.Write("Select Recovery rate (Suggested: 7 - 21):  ");
+            Console.Write("Select Recovery Rate (Suggested: 7 - 21):  ");
             string result = GetUserInput();
 
             double temp = -1;
@@ -119,12 +116,11 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
 
         private double InfectionRateSelect()
         {
-            Console.Write("Select Infection rate (Suggested: 0.0 - 1.0):  ");
+            Console.Write("Select Infection Rate (Suggested: 0.0 - 1.0):  ");
             string result = GetUserInput();
 
             double temp = -1;
@@ -146,7 +142,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
 
         private int ThreadCountSelect()
@@ -173,7 +168,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
 
         private int VisualizeFlagSelect() {
@@ -200,7 +194,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
         private int MapXSelect()
         {
@@ -227,8 +220,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
-
         }
 
         private int MapYSelect()
@@ -256,8 +247,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
-
         }
         private int ZombieModeSelect()
         {
@@ -284,7 +273,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
 
         public ISimulation SimulationSelector() 
@@ -315,7 +303,6 @@ namespace MultiThreadingConsoleApp
                 isMapVisible = VisualizeFlagSelect();
 
                 return new SimulationGenerate(threadCount,mapX,mapY,peopleCount,isMapVisible == 1, mode == 1, infectedCountSelect,infectionRate, recoveryRate);
-
             }
         }
 
@@ -361,7 +348,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-        
         }
 
         public double ConvertToDouble(string input)
@@ -378,7 +364,6 @@ namespace MultiThreadingConsoleApp
             }
 
             return temp;
-
         }
     }
 }

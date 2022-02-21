@@ -9,7 +9,6 @@ namespace MultiThreadingConsoleApp
         int id;
         private List<Point> remainingPositions = new List<Point>();
         private List<Point> donePositions = new List<Point>();
-
         Point previousPosition;
         Point position;
         int texture = 1;
@@ -18,7 +17,6 @@ namespace MultiThreadingConsoleApp
         int speed = 1;
         double recoveryRate = 0;
         double infectionRate = 1;
-
 
         public int Id { get => id; set => id = value; }
         public Point Position { get => position; set => position = value; }
@@ -64,7 +62,6 @@ namespace MultiThreadingConsoleApp
 
         public Person(StatusEnum status, List<Point> points) 
         {
-          
             this.Id = commonId;
             this.Status = status;
             this.RemainingPositions = points;
@@ -101,8 +98,6 @@ namespace MultiThreadingConsoleApp
         public Point Move()
         {
             this.previousPosition = this.position;
-           
-
             this.position = this.RemainingPositions[0];
             this.RemainingPositions.RemoveAt(0);
             this.DonePositions.Add(this.position);
@@ -113,7 +108,6 @@ namespace MultiThreadingConsoleApp
         {
             return 0 <= posX + dx && posX + dx < boundaryX &&
                    0 <= posY + dy && posY + dy < boundaryY;
-
         }
 
     }
